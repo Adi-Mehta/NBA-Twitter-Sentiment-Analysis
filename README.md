@@ -10,7 +10,7 @@ This is a project analyzing the sentiment behind the two teams in the NBA champi
 * ggplot
 ## Organization
 All the code in contained within an R project file: 
-NBATweets.Rproj
+*NBATweets.Rproj*
 However, I have separated the project into the following steps for ease:
 * twitterAuth.R: Contains the nececssary information to authorize the Twitter API
 * twitterSearch.R: Contains the search query terms to extract Warriors and Raptors tweets 
