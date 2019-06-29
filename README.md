@@ -9,7 +9,7 @@ This is a project analyzing the sentiment behind the two teams in the NBA champi
 * syuzhet
 * ggplot
 ## Organization
-All the code in contained within an R project file:
+All the code in contained within an R project file: 
 NBATweets.Rproj
 However, I have separated the project into the following steps for ease:
 * twitterAuth.R: Contains the nececssary information to authorize the Twitter API
