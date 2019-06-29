@@ -1,0 +1,84 @@
+library(twitteR)
+library(tm)
+library(NLP)
+library(wordcloud)
+library(ROAuth)
+library(syuzhet)
+library(ggplot)
+
+consumer_key<-"m4zgWONfthGTIXN2ewujsugJC"
+consumer_secret<-"S8LFXI2McfLSv2ptphgoy4iDIOzVm4SH9WHW1QJ7ZrkYOVAb0M"
+access_token<-"2761194390-TPIPWDQ1Vlyub7gmAybKonFFMuDetEXQZvY3mC8"
+access_secret<-"DaLhQwgUtwgQ1DVI7dCnNq84weCFSr2Jps0kEVr1Ya5QV"
+
+setup_twitter_oauth(consumer_key,consumer_secret, access_token,access_secret)
+
+tweetsW <- searchTwitter("Warriors", n=1200,lang="en")    #retrieving 1200 tweets about warriors
+tweetsR <- searchTwitter("Raptors",n=1200, lang="en")    #retrieving 1200 tweets about the raptors
+warTweets <- twListToDF(tweetsW)
+rapTweets <- twListToDF(tweetsR)
+
+#preprocessing
+cleanText <- function(x) {
+  x$text <- tolower(x$text)    #covert to lowercase
+  x$text <- gsub("rt","", x$text)    #remove the rt
+  x$text <- gsub("\\p{So}|\\p{Cn}", "", x$text, perl = TRUE)    #
+  x$text <- gsub("[^[:alnum:]///' ]", "", x$text)   
+  x$text <- gsub("&amp", "", x$text)   #remove the &amp
+  x$text <- gsub("&amp", "", x$text)    #must do it twice
+  x$text <- gsub("http[^[:space:]]*","",x$text)    #remove any links
+}
+
+warText <- cleanText(warTweets)
+rapText <- cleanText(rapTweets)
+
+cleanCorpus <- function(x) {
+  x <- tm_map(x, removePunctuation)    #remove punctuation
+  x <- tm_map(x, content_transformer(removeEmoji))    #remove emojis
+  x <- tm_map(x,content_transformer(removeSpecialChar))    #remove special characters
+  x <- tm_map(x, content_transformer(removeURL))    #remove URLs
+  x <- tm_map(x, content_transformer(stripWhitespace))   #strip the whitespace
+}
+warText <- iconv(warText, "ASCII", "UTF-8", sub="byte")   #before converting to corpus
+rapText <- iconv(rapText, "ASCII", "UTF-8", sub="byte")   #before converting to corpus
+
+#corpus creation
+corpus.warTweets <- Corpus(VectorSource(warText))    #corpus creation
+corpus.rapTweets <- Corpus(VectorSource(rapText))    #corpus creation
+corpus.warTweets <- tm_map(corpus.warTweets, removeWords, stopwords("english"))     #remove common stopwords
+corpus.rapTweets <- tm_map(corpus.rapTweets, removeWords, stopwords("english"))     #remove common stopwords
+corpus.warTweets <- cleanCorpus(corpus.warTweets)    
+corpus.rapTweets <- cleanCorpus(corpus.rapTweets)
+
+#tdm conversion
+wTdm <- TermDocumentMatrix(corpus.warTweets)
+rTdm <- TermDocumentMatrix(corpus.rapTweets)
+wTdm <- as.matrix(wTdm)
+rTdm <- as.matrix(rTdm)
+r<-sort(rowSums(rTdm),decreasing=TRUE)
+w<-sort(rowSums(wTdm),decreasing=TRUE)
+
+#wordcloud visualizations
+wordcloud(corpus.rapTweets,min.freq = 18, max.words=200, random.order = FALSE,colors=brewer.pal(8, "Dark2"))
+wordcloud(corpus.warTweets,min.freq = 20, max.words=200, random.order = FALSE,colors=brewer.pal(8, "Dark2"))
+
+#extracting sentiment for Warriors
+warSentiment <- get_nrc_sentiment(warText)
+sentimentW <-data.frame(colSums(warSentiment[,]))
+names(sentimentW) <-"Score"
+sentimentW <-cbind("sentiment"=rownames(sentimentW),sentimentW)
+rownames(sentimentW)<-NULL
+
+#extrating sentiment for Raptors
+rapSentiment <- get_nrc_sentiment(rapText)
+sentimentR <-data.frame(colSums(rapSentiment[,]))
+names(sentimentR) <-"Score"
+sentimentR <-cbind("sentiment"=rownames(sentimentR),sentimentR)
+rownames(sentimentR)<-NULL
+
+#plotting our sentiments
+ggplot(data=sentimentW, aes(x=sentiment, y=Score))+geom_bar(aes(fill=sentiment),stat="identity")+theme(legend.position="none")+xlab("Sentiments")+ylab("scores")+
+  ggtitle("Sentiments of Tweets behind Warriors")
+
+ggplot(data=sentimentR, aes(x=sentiment, y=Score))+geom_bar(aes(fill=sentiment),stat="identity")+theme(legend.position="none")+xlab("Sentiments")+ylab("scores")+
+  ggtitle("Sentiments of Tweets behind Raptors")
