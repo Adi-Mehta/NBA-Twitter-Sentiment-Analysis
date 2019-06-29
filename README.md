@@ -20,3 +20,14 @@ However, I have separated the project into the following steps for ease:
 * sentiment.R: Extracting the sentiment of each set of tweets
 * visualizations.R: Contains several visualizations of Sentiment breakdown, along with wordclouds of frequency
 ## Results
+Wordcloud for the search term Warriors:
+![Warrioswordcloud](https://user-images.githubusercontent.com/34528421/60382507-c5cdc400-9a18-11e9-86fd-bb4f13656025.jpeg)
+
+Wordcloud for the search term Raptors:
+![raptorswordcloud](https://user-images.githubusercontent.com/34528421/60382545-50aebe80-9a19-11e9-9081-83f3f873e4f2.jpeg)
+
+Sentiment Analysis for Warriors:
+![sentiment warriors](https://user-images.githubusercontent.com/34528421/60382550-6a500600-9a19-11e9-8c9a-25a705cc02e4.jpeg)
+
+Sentiment Analysis for Raptors:
+![raptors sentiment](https://user-images.githubusercontent.com/34528421/60382551-6cb26000-9a19-11e9-9255-88091c2b9bdf.jpeg)
