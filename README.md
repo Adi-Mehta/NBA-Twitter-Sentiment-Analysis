@@ -31,5 +31,3 @@ Sentiment Analysis for Warriors:
 
 Sentiment Analysis for Raptors:
 ![raptors sentiment](https://user-images.githubusercontent.com/34528421/60382551-6cb26000-9a19-11e9-9255-88091c2b9bdf.jpeg)
-
-I was really surprised to see the amount of negative sentiment surrounding the team that just won that NBA championship! Additonally, I was surprised to see an absurd amount of positivity was surrounding the Warriors in this time of free agency, despite having two superstars possibly in different jerseys next season.
